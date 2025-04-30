@@ -4,6 +4,10 @@ authors = []
 description = ""
 telemetry = false
 requirements = []
+[contracts.notification-registry]
+path = "contracts/notification-registry.clar"
+depends_on = []
+
 [contracts.pixelmint]
 path = "contracts/pixelmint.clar"
 depends_on = []

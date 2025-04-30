@@ -1,10 +1,10 @@
 # PixelMint Art Platform
 
-A specialized NFT platform dedicated to pixel art creators and collectors on the Stacks blockchain, enabling artists to mint, sell, and manage unique pixel art NFTs with automated royalties and provenance tracking.
+A specialized NFT platform dedicated to pixel art creators and collectors on the Stacks blockchain, enabling artists to mint, sell, and manage unique pixel art NFTs with automated royalties, provenance tracking, and comprehensive social features.
 
 ## Overview
 
-PixelMint empowers pixel artists to tokenize their artwork as NFTs with specific features tailored for pixel art:
+PixelMint empowers pixel artists to tokenize their artwork as NFTs with specific features tailored for pixel art and community engagement:
 
 - Mint pixel art as verifiable NFTs with embedded metadata
 - Support for various pixel art dimensions and color palettes
@@ -12,10 +12,13 @@ PixelMint empowers pixel artists to tokenize their artwork as NFTs with specific
 - Artist registration and profile management
 - Secure ownership tracking and transfer capabilities
 - Built-in marketplace functionality
+- Social features including follows, favorites, and comments
+- Real-time notifications for platform activities
+- Community engagement tools for artists and collectors
 
 ## Architecture
 
-The platform is built around a single smart contract that manages all core functionality. Here's how the components interact:
+The platform is built around a core smart contract with integrated social features. Here's how the components interact:
 
 ```mermaid
 graph TD
@@ -28,6 +31,9 @@ graph TD
     G -->|Process Payments| H[Payment Distribution]
     H -->|Pay| A
     H -->|Pay| I[Platform]
+    J[Users] -->|Follow/Favorite| K[Social Graph]
+    K -->|Generate| L[Notifications]
+    M[Comments] -->|Store| N[Artwork Engagement]
 ```
 
 ## Contract Documentation
@@ -48,12 +54,20 @@ graph TD
    - Handles royalty calculations and distributions
    - Manages sale listings
 
+4. **Social Features**
+   - User following system
+   - Artwork favorites
+   - Comments on artworks
+   - Activity notifications
+
 ### Key Features
 
 - **Automated Royalties**: Up to 30% royalty rate for original creators
 - **Platform Fee**: 5% fee on all sales
 - **Metadata Storage**: Supports detailed artwork information including dimensions, color palettes
 - **Ownership Tracking**: Maintains accurate records of NFT ownership
+- **Social Engagement**: Comprehensive social features for community building
+- **Notifications**: Real-time updates for platform activities
 
 ## Getting Started
 
@@ -83,9 +97,11 @@ graph TD
 )
 ```
 
-3. **List for Sale**
+3. **Social Interactions**
 ```clarity
-(contract-call? .pixelmint list-for-sale u1 u1000000) ;; token-id, price in STX
+(contract-call? .pixelmint follow-user user-principal)
+(contract-call? .pixelmint favorite-artwork token-id)
+(contract-call? .pixelmint add-comment token-id "Great artwork!")
 ```
 
 ## Function Reference
@@ -113,6 +129,16 @@ graph TD
 (buy-nft (token-id uint))
 ```
 
+### Social Functions
+
+```clarity
+(follow-user (user-to-follow principal))
+(unfollow-user (user-to-unfollow principal))
+(favorite-artwork (token-id uint))
+(add-comment (token-id uint) (content (string-utf8 500)))
+(mark-notification-read (notification-id uint))
+```
+
 ### Read-Only Functions
 
 ```clarity
@@ -120,6 +146,9 @@ graph TD
 (get-artwork-info (token-id uint))
 (get-token-owner (token-id uint))
 (get-sale-info (token-id uint))
+(get-follower-count (user principal))
+(get-favorite-count (token-id uint))
+(get-artwork-comment-ids (token-id uint))
 ```
 
 ## Development
@@ -142,6 +171,8 @@ graph TD
 - Maximum pixel data length: 16,384 bytes
 - Maximum royalty percentage: 30%
 - Platform fee: Fixed at 5%
+- Maximum comment length: 500 characters
+- Maximum notifications per user: 100
 
 ### Best Practices
 
@@ -149,6 +180,8 @@ graph TD
 2. Check ownership before operations
 3. Validate prices and royalty calculations
 4. Be aware of gas costs for larger pixel art data
+5. Monitor notification limits
+6. Validate social interaction permissions
 
 ### Error Handling
 
@@ -156,4 +189,6 @@ The contract includes comprehensive error codes:
 - `ERR-NOT-AUTHORIZED (u100)`
 - `ERR-ALREADY-REGISTERED (u101)`
 - `ERR-NOT-REGISTERED (u102)`
+- `ERR-ALREADY-FOLLOWING (u111)`
+- `ERR-ALREADY-FAVORITED (u113)`
 - And more...
